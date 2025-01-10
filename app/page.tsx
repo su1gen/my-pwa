@@ -1,48 +1,27 @@
-'use client';
+"use client"
 
-import { Suspense, useEffect, useState } from 'react'
-import { useSearchParams } from 'next/navigation'
-
-
-function SearchParamsBlock() {
-  const [fileName, setFileName] = useState('')
-  const searchParams = useSearchParams()
-
-  useEffect(() => {
-    // Получаем имя файла из URL
-    const fileNameParam = searchParams.get('fileName')
-    const error = searchParams.get('error')
-
-    if (fileNameParam) {
-      setFileName(decodeURIComponent(fileNameParam))
-    }
-
-    if (error) {
-      alert('Произошла ошибка при обработке файла')
-    }
-  }, [searchParams])
-
-  return <div className="bg-green-100 p-4 rounded-lg">
-    <h2 className="font-semibold">Получен файл:</h2>
-    <p className="mt-2">{fileName}</p>
-  </div>
-
-}
-
+import { useState, useEffect } from 'react';
 
 export default function Home() {
+  const [fileName, setFileName] = useState<string | null>(null);
 
+  useEffect(() => {
+    // Проверяем, был ли передан файл через URL.
+    const params = new URLSearchParams(window.location.search);
+    const file = params.get('fileName');
+    if (file) {
+      setFileName(file);
+    }
+  }, []);
 
   return (
-    <main className="min-h-screen p-4">
-      <div className="max-w-md mx-auto mt-10">
-        <h1 className="text-2xl font-bold mb-4">File Sharing PWA</h1>
-
-        <Suspense>
-          <SearchParamsBlock/>
-        </Suspense>
-
-      </div>
+    <main style={{ padding: '2rem', textAlign: 'center' }}>
+      <h1>Welcome to My PWA App</h1>
+      {fileName ? (
+        <p>Shared file: <strong>{fileName}</strong></p>
+      ) : (
+        <p>No file shared yet. Share a file to see its name!</p>
+      )}
     </main>
-  )
+  );
 }
