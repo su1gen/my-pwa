@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 export async function POST(request: NextRequest) {
 
   try {
+    const { origin } = request.nextUrl
     const formData = await request.formData()
     const file = formData.get('file') as File
 
@@ -11,7 +12,7 @@ export async function POST(request: NextRequest) {
       return redirect('/?error=true')
     }
 
-    return NextResponse.redirect(`/files`)
+    return NextResponse.redirect(`${origin}/files`)
 
   } catch(error) {
     console.error('Error processing shared file:', error)
