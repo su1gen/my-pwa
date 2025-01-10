@@ -1,7 +1,7 @@
 {
-  "name": "File Share PWA",
-  "short_name": "Share PWA",
-  "description": "PWA that handles shared files",
+  "name": "File Sharing PWA",
+  "short_name": "Share Files",
+  "description": "An app for handling shared files",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -10,7 +10,8 @@
     {
       "src": "/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/icon-512x512.png",

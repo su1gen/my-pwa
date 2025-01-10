@@ -1,16 +1,19 @@
-import { NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
+import { redirect } from 'next/navigation'
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File
 
-    return NextResponse.redirect(`https://my-pwa-phi.vercel.app//file?name=${file.name}`)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    if (!file) {
+      return redirect('/?error=true')
+    }
+
+    // Перенаправляем на главную страницу с информацией о файле
+    return redirect(`/?fileName=${encodeURIComponent(file.name)}`)
   } catch (error) {
-    // В случае ошибки также используем URL constructor
-    const errorUrl = new URL('/', request.url)
-    errorUrl.searchParams.set('error', 'unknown')
-    return NextResponse.redirect(errorUrl.toString())
+    console.error('Error processing shared file:', error)
+    return redirect('/?error=true')
   }
 }
