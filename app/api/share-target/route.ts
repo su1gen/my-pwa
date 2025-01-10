@@ -1,27 +1,32 @@
 import { NextResponse } from 'next/server'
+import { headers } from 'next/headers'
 
 export async function POST(request: Request) {
+  const headersList = await headers()
+
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File
+    
+    // Получаем базовый URL из заголовков
+    const protocol = headersList.get('x-forwarded-proto') || 'http'
+    const host = headersList.get('host') || ''
+    const baseURL = `${protocol}://${host}`
 
     if (!file) {
-      // Создаем URL с использованием URL constructor
-      const errorUrl = new URL('/', request.url)
-      errorUrl.searchParams.set('error', 'no-file')
-      return NextResponse.redirect(errorUrl.toString())
+      return NextResponse.redirect(`${baseURL}/?error=no-file`)
     }
 
-    // Создаем корректный URL для редиректа
-    const successUrl = new URL('/', request.url)
-    successUrl.searchParams.set('file', file.name)
+    // Безопасно кодируем имя файла
+    const encodedFileName = encodeURIComponent(file.name)
+    return NextResponse.redirect(`${baseURL}/?file=${encodedFileName}`)
 
-    return NextResponse.redirect(successUrl.toString())
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
-    // В случае ошибки также используем URL constructor
-    const errorUrl = new URL('/', request.url)
-    errorUrl.searchParams.set('error', 'unknown')
-    return NextResponse.redirect(errorUrl.toString())
+    console.error('Share target error:', error)
+    const protocol = headersList.get('x-forwarded-proto') || 'http'
+    const host = headersList.get('host') || ''
+    const baseURL = `${protocol}://${host}`
+
+    return NextResponse.redirect(`${baseURL}/?error=unknown`)
   }
 }
