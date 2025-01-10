@@ -1,40 +1,27 @@
 "use client"
-import { useEffect, useState } from 'react';
+
+import { useState, useEffect } from 'react';
 
 export default function Home() {
   const [fileName, setFileName] = useState<string | null>(null);
 
   useEffect(() => {
-    // Проверяем наличие Shared Data от системного меню
-    if ('navigator' in window && 'canShare' in navigator) {
-      const params = new URLSearchParams(window.location.search);
-      const sharedFileName = params.get('fileName');
-      if (sharedFileName) {
-        setFileName(sharedFileName);
-      }
+    // Проверяем, был ли передан файл через URL.
+    const params = new URLSearchParams(window.location.search);
+    const file = params.get('fileName');
+    if (file) {
+      setFileName(file);
     }
   }, []);
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setFileName(file.name);
-    }
-  };
-
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>My PWA App</h1>
-      <p>
-        {fileName ? (
-          <>
-            <strong>Загруженный файл:</strong> {fileName}
-          </>
-        ) : (
-          'Выберите или поделитесь файлом для отображения его имени.'
-        )}
-      </p>
-      <input type="file" onChange={handleFileUpload} />
-    </div>
+    <main style={{ padding: '2rem', textAlign: 'center' }}>
+      <h1>Welcome to My PWA App</h1>
+      {fileName ? (
+        <p>Shared file: <strong>{fileName}</strong></p>
+      ) : (
+        <p>No file shared yet. Share a file to see its name!</p>
+      )}
+    </main>
   );
 }
