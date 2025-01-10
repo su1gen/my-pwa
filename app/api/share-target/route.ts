@@ -1,7 +1,8 @@
-import { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { redirect } from 'next/navigation'
 
 export async function POST(request: NextRequest) {
+
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File
@@ -10,10 +11,10 @@ export async function POST(request: NextRequest) {
       return redirect('/?error=true')
     }
 
-    // Перенаправляем на главную страницу с информацией о файле
-    return redirect(`/`)
-  } catch (error) {
+    return NextResponse.redirect(`/files`)
+
+  } catch(error) {
     console.error('Error processing shared file:', error)
-    return redirect('/?error=true')
+    return NextResponse.redirect('/?error=true')
   }
 }
