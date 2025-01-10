@@ -6,12 +6,22 @@ export async function POST(request: Request) {
     const file = formData.get('file') as File
 
     if (!file) {
-      return NextResponse.redirect('/?error=no-file')
+      // Создаем URL с использованием URL constructor
+      const errorUrl = new URL('/', request.url)
+      errorUrl.searchParams.set('error', 'no-file')
+      return NextResponse.redirect(errorUrl.toString())
     }
 
-    // Перенаправляем на главную страницу с именем файла
-    return NextResponse.redirect(`/?file=${encodeURIComponent(file.name)}`)
+    // Создаем корректный URL для редиректа
+    const successUrl = new URL('/', request.url)
+    successUrl.searchParams.set('file', file.name)
+
+    return NextResponse.redirect(successUrl.toString())
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
-    return NextResponse.redirect(`/?error=${(error as Error).message}`)
+    // В случае ошибки также используем URL constructor
+    const errorUrl = new URL('/', request.url)
+    errorUrl.searchParams.set('error', 'unknown')
+    return NextResponse.redirect(errorUrl.toString())
   }
 }
