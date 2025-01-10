@@ -1,20 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { redirect } from 'next/navigation'
 
 export async function POST(request: NextRequest) {
-
   try {
-    const formData = await request.formData()
-    const file = formData.get('file') as File
+    // Логируем запрос
+    console.log('Request received:', request);
 
+    const formData = await request.formData();
+    console.log('Form Data:', Array.from(formData.entries()));
+
+    const file = formData.get('file') as File;
     if (!file) {
-      return redirect('/?error=true')
+      console.error('No file found in the request.');
+      return NextResponse.redirect('/?error=true');
     }
 
-    return NextResponse.redirect(`https://my-pwa-phi.vercel.app/files`)
+    console.log('File received:', {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+    });
 
-  } catch(error) {
-    console.error('Error processing shared file:', error)
-    return NextResponse.redirect('/?error=true')
+    return NextResponse.redirect('https://my-pwa-phi.vercel.app/files');
+  } catch (error) {
+    console.error('Error processing shared file:', error);
+    return NextResponse.redirect('/?error=true');
   }
 }
